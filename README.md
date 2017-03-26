@@ -14,3 +14,7 @@ npm install web-dev-server-example-helloworld
 ```shell
 node run-server.js
 ```
+- open your web browser on:
+  http://localhost:8888/static-content/
+  http://localhost:8888/dynamic-content/
+  http://localhost:8888/dynamic-content/anything-else

@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 var App = function (httpServer, expressServer, sessionParser, request, response) {
 	this._init(httpServer, expressServer, sessionParser, request, response);
 };
@@ -13,9 +15,20 @@ App.prototype = {
 	httpRequestHandler: function (request, response, callback) {
 		this._completeWholeRequestInfo(request, function (requestInfo) {
 			
-			response.send('hallo world! (' + requestInfo.url + ')');
 			
-			callback();
+			
+			var staticHtmlFileFullPath = __dirname + '/../static-content/index.html';
+			fs.readFile(staticHtmlFileFullPath, 'utf8', function (err,data) {
+				if (err) {
+					console.log(err);
+					return callback();
+				}
+				response.send(data.replace(/%requestPath/g, requestInfo.url));
+				callback();
+			});
+			
+			
+			
 		}.bind(this));
 	},
 	_completeWholeRequestInfo: function (request, callback) {

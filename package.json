@@ -1,0 +1,20 @@
+{
+  "name": "web-dev-server/example-helloworld",
+  "version": "1.0.0",
+  "description": "Hallo world example with static and dynamic content.",
+  "homepage": "https://github.com/web-dev-server",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/web-dev-server/example-helloworld.git"
+  },
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Tom Flídr",
+    "email": "tomflidr@gmail.com",
+    "url": "https://github.com/tomFlidr"
+  },
+  "main": "run-server.js",
+  "dependencies": {
+    "web-dev-server": "~1.0.4"
+  }
+}

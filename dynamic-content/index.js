@@ -10,15 +10,15 @@ var fs = require('fs');
 		in `httpRequestHandler` execution - this file and constructor is loaded and called again - to develop more comfortably.
  * @param {http}		http 		used node http module instance
  * @param {express}		express 	used node express module instance
- * @param {sessionParser}	sessionParser	used node sessionParser module instance
+ * @param {expressSession}	expressSession	used node expressSession module instance
  * @param {request}		request		current http request object
  * @param {response}		response	current http response object
  * @return void
  */
-var App = function (http, express, sessionParser, request, response) {
-	this._httpServer = httpServer;
-	this._expressServer = expressServer;
-	this._sessionParser = sessionParser;
+var App = function (http, express, expressSession, request, response) {
+	this._http = http;
+	this._express = express;
+	this._expressSession = expressSession;
 };
 App.prototype = {
 	/**
@@ -36,7 +36,11 @@ App.prototype = {
 			
 			// some demo operation to say hallo world:
 			var staticHtmlFileFullPath = __dirname + '/../static-content/index.html';
-			fs.readFile(staticHtmlFileFullPath, 'utf8', function (err,data) {
+			fs.readFile(staticHtmlFileFullPath, 'utf8', function (err, data) {
+				
+				// try to uncomment line bellow to see rendered error in browser:
+				//throw new Error(":-)");
+				
 				if (err) {
 					console.log(err);
 					return callback();

@@ -45,7 +45,7 @@ App.prototype = {
 					console.log(err);
 					return callback();
 				}
-				response.send(data.replace(/%requestPath/g, requestInfo.url));
+				response.send(data.replace(/%requestPath/g, requestInfo.requestPath));
 				callback();
 			});
 			
@@ -61,23 +61,35 @@ App.prototype = {
 	 * @return	void
 	 */
 	_completeWholeRequestInfo: function (request, callback) {
-        	var reqInfo = {
-            		url: request.url,
-            		method: request.method,
-            		headers: request.headers,
-            		statusCode: request.statusCode,
-            		textBody: ''
-        	};
-        	var bodyArr = [];
-        	request.on('error', function (err) {
-            		console.error(err);
-        	}).on('data', function (chunk) {
-            		bodyArr.push(chunk);
-        	}).on('end', function () {
-            		reqInfo.textBody = Buffer.concat(bodyArr).toString();
-            		reqInfo.request = request;
-            		callback(reqInfo);
-        	}.bind(this));
+		var basePath = request.basePath === null ? '' : request.basePath,
+			domainUrl = request.protocol + '://' + request.hostname,
+			queryString = '', 
+			delim = '?';
+		for (var paramName in request.query) {
+			queryString += delim + paramName + '=' + request.query[paramName];
+			delim = '&';
+		}
+		var reqInfo = {
+			basePath: basePath,
+			path: request.path,
+			requestPath: basePath + request.path,
+			domainUrl: domainUrl,
+			fullUrl: domainUrl + basePath + request.path + queryString,
+			method: request.method,
+			headers: request.headers,
+			statusCode: request.statusCode,
+			textBody: ''
+		};
+		var bodyArr = [];
+		request.on('error', function (err) {
+			console.error(err);
+		}).on('data', function (chunk) {
+			bodyArr.push(chunk);
+		}).on('end', function () {
+			reqInfo.textBody = Buffer.concat(bodyArr).toString();
+			reqInfo.request = request;
+			callback(reqInfo);
+		}.bind(this));
 	}
 };
 

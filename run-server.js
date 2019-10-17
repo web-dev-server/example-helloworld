@@ -6,6 +6,7 @@ var devServer = (new WebDevServer())
 	// .SetDomain('127.0.0.1')					// optional, localhost by default
 	// .SetDevelopment(false)					// optional, true by default to display Errors and directory content
 	// .SetBasePath('/node')					// optional, null by default, useful for apache proxy modes
+	// .SetErrorHandler((e,code,req,res) => {})	// optional, custom place to log any unhandled errors and warnings
 	.AddHandler(function (req, res, e, cb) {	// optional, to prepend any execution before `web-dev-server` module execution
 		if (req.url == '/health') {
 			res.writeHead(200);

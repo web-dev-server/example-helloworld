@@ -1,6 +1,6 @@
 {
   "name": "web-dev-server-example-helloworld",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "keywords": [
     "hello",
     "world",
@@ -10,7 +10,7 @@
     "node"
   ],
   "description": "Hello world example with static and dynamic content in Javascript.",
-  "homepage": "https://github.com/web-dev-server",
+  "homepage": "https://github.com/web-dev-server/example-helloworld",
   "repository": {
     "type": "git",
     "url": "https://github.com/web-dev-server/example-helloworld.git"
@@ -23,6 +23,6 @@
   },
   "main": "run-server.js",
   "dependencies": {
-    "web-dev-server": "^2.0.2"
+    "web-dev-server": "^2.1"
   }
 }

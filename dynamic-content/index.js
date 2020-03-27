@@ -1,67 +1,96 @@
 var fs = require('fs');
 
-
-/**
- * @summary	Constructor, called only for first time, when there is default directory request with index.js 
- 		file inside and there is necessary to create instance of this `module.exports` content to call 
-		`instance.httpRequestHandler` method to dispatch http request. If there is detected any file change
-		inside this file, `web-deb-server` module automaticly reload content of this file and it creates
-		instance and call this constructor again automaticly, the same behaviour if there is any catched error 
-		in `httpRequestHandler` execution - this file and constructor is loaded and called again - to develop more comfortably.
- * @param {http}		http 		used node http module instance
- * @param {express}		express 	used node express module instance
- * @param {expressSession}	expressSession	used node expressSession module instance
- * @param {request}		request		current http request object
- * @param {response}		response	current http response object
+/** 
+ * @summary Application constructor, which is executed only once, 
+ * 			when there is a request to directory with default index.js 
+ * 			script inside. Then it's automatically created an instance 
+ * 			of `module.exports` content. Then it's executed 
+ * 			`handleHttpRequest` method on that instance. 
+ * 			This is the way, how is directory request handled with 
+ * 			default `index.js` file inside. 
+ * 			If there is detected any file change inside this file 
+ * 			(or inside file included in this file), the module 
+ * 			`web-deb-server` automaticly reloads all necesssary 
+ * 			dependent source codes and creates this application 
+ * 			instance again. The same realoding procedure is executed, 
+ * 			if there is any unhandled error inside method 
+ * 			`handleHttpRequest` (to develop more comfortably).
+ * @param {http}			http 			Used node http module instance.
+ * @param {express}			express 		Used node express module instance.
+ * @param {expressSession}	expressSession	Used node expressSession module instance.
+ * @param {request}			request			Current http request object.
+ * @param {response}		response		Current http response object.
  * @return void
  */
 var App = function (http, express, expressSession, request, response) {
-	this._http = http;
-	this._express = express;
-	this._expressSession = expressSession;
+	// Any initializations:
+
+	express.get("/dynamic-content/special", (req, res) => {
+		console.log("Something special has been requested:-)");
+	});
 };
 App.prototype = {
 	/**
-	 * @summary 	Method called each request to dispatch request for default directory content containing 
-	 *		`index,js` file (also for first time after constructor). 
-	 * @param {request}	request		current http request object
-	 * @param {response}	response 	current http response object
-	 * @param {function}	callback 	callback to do any other node.js operations
-	 * @return void
+	 * @summary Requests counter.
+	 * @var {number}
 	 */
-	httpRequestHandler: function (request, response, callback) {
-		this._completeWholeRequestInfo(request, function (requestInfo) {
+	counter: 0,
+	
+	/**
+	 * @summary This method is executed each request to directory with 
+	 * 			`index.js` script inside (also executed for first time 
+	 * 			immediately after constructor).
+	 * @param {request}		request		Current http request object.
+	 * @param {response}	response 	Current http response object.
+	 * @return {Promise}
+	 */
+	handleHttpRequest: function (request, response) {
+		// Called every request:
+		console.log("Application has been requested.");
+		
+		return new Promise(function (resolve, reject) {
+			this.completeWholeRequestInfo(request, function (requestInfo) {
 			
-			
-			
-			// some demo operation to say hallo world:
-			var staticHtmlFileFullPath = __dirname + '/../static-content/index.html';
-			fs.readFile(staticHtmlFileFullPath, 'utf8', function (err, data) {
+				// increase request counter:
+				this.counter++;
+
+				// some demo operation to say hallo world:
+				var staticHtmlFileFullPath = __dirname + '/../static-content/index.html';
 				
 				// try to uncomment line bellow to see rendered error in browser:
-				//throw new Error(":-)");
+				//throw new Error("Uncatched test error.");
+
+				fs.readFile(staticHtmlFileFullPath, 'utf8', function (err, data) {
+					
+					// try to uncomment line bellow to see rendered error in browser:
+					//throw new Error("Uncatched test error.");
+					
+					if (err) {
+						console.log(err);
+						return reject();
+					}
+					response.send(data.replace(
+						/%requestPath/g, 
+						requestInfo.requestPath + " (" + this.counter.toString() + "×)"
+					));
+					resolve();
+				}.bind(this));
 				
-				if (err) {
-					console.log(err);
-					return callback();
-				}
-				response.send(data.replace(/%requestPath/g, requestInfo.requestPath));
-				callback();
-			});
-			
-			
-			
-			
+				
+				
+				
+			}.bind(this));
 		}.bind(this));
 	},
 	/**
-	 * @summary	Complete whole request body to operate with it later properly (encode json data or anything else...)
-	 * @param	{request}	request		current http request
-	 * @param	{function}	callback	callback to execute after whole request body is loaded or request loading failed
-	 * @return	void
+	 * @summary	This method completes whole request body to operate with it 
+	 * 			later properly (to encode json data or anything more).
+	 * @param	{request}	request		Current http request.
+	 * @param	{function}	callback	Callback to execute after whole request body is loaded or request loading failed.
+	 * @return	{void}
 	 */
-	_completeWholeRequestInfo: function (request, callback) {
-		var basePath = request.basePath === null ? '' : request.basePath,
+	completeWholeRequestInfo: function (request, callback) {
+		var baseUrl = request.baseUrl === null ? '' : request.baseUrl,
 			domainUrl = request.protocol + '://' + request.hostname,
 			queryString = '', 
 			delim = '?';
@@ -70,11 +99,11 @@ App.prototype = {
 			delim = '&';
 		}
 		var reqInfo = {
-			basePath: basePath,
+			baseUrl: baseUrl,
 			path: request.path,
-			requestPath: basePath + request.path,
+			requestPath: baseUrl + request.path,
 			domainUrl: domainUrl,
-			fullUrl: domainUrl + basePath + request.path + queryString,
+			fullUrl: domainUrl + baseUrl + request.path + queryString,
 			method: request.method,
 			headers: request.headers,
 			statusCode: request.statusCode,
@@ -92,6 +121,5 @@ App.prototype = {
 		}.bind(this));
 	}
 };
-
 
 module.exports = App;

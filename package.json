@@ -1,6 +1,6 @@
 {
   "name": "web-dev-server-example-helloworld",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "keywords": [
     "hello",
     "world",
@@ -23,6 +23,6 @@
   },
   "main": "run-server.js",
   "dependencies": {
-    "web-dev-server": "^2.1"
+    "web-dev-server": "^3.0"
   }
 }

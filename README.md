@@ -1,7 +1,7 @@
 # Example - Hello World - Javascript
 
 [![Latest Stable Version](https://img.shields.io/badge/Stable-v3.0.0-brightgreen.svg?style=plastic)](https://github.com/web-dev-server/example-helloworld/releases)
-[![License](https://img.shields.io/badge/Licence-BSD-brightgreen.svg?style=plastic)](https://github.com/web-dev-server/example-helloworld/blob/master/LICENCE.md)
+[![License](https://img.shields.io/badge/Licence-BSD-brightgreen.svg?style=plastic)](https://github.com/web-dev-server/example-helloworld/blob/master/LICENSE.md)
 
 Hallo world example with static and dynamic content in Javascript.
 
